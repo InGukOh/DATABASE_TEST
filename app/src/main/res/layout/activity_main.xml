@@ -75,7 +75,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
-            android:id="@+id/btnUpdate"
+            android:id="@+id/btnReset"
             android:text="초기화"/>
         <Button
             android:layout_width="wrap_content"

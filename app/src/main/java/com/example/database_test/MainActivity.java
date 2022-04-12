@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     TextView num , edit_schduel, edit_timer;
     EditText setSchedule, setTimer, listSchedule, listTimer;
-    Button btnInsert, btnSelect, btnUpdate, btnCreate, listDelThis;
+    Button btnInsert, btnSelect, btnReset, btnCreate, listDelThis;
 
     LinearLayout add_Timer_Layout;
 
@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         edit_timer = findViewById(R.id.edtNumberResult);
         btnInsert = findViewById(R.id.btnInsert);
         btnSelect = findViewById(R.id.btnSelect);
-        btnUpdate = findViewById(R.id.btnUpdate);
+        btnReset = findViewById(R.id.btnReset);
         btnCreate = findViewById(R.id.btnCreate);
 
         listSchedule = new EditText(getApplicationContext());
@@ -100,10 +100,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btnUpdate.setOnClickListener(new View.OnClickListener() {
+        btnReset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onClick_Drop(view);
+                onClick_Select(view);
             }
 
         });
@@ -142,8 +143,6 @@ public class MainActivity extends AppCompatActivity {
 
         cursor.close();
         sqlDB.close();
-        cursor.close();
-        sqlDB.close();
     }
     public void onClick_Insert(View view) {
         //마찬가지로 쓰기용으로 열고, 쿼리문을 입력해준다. 따옴표에 주의하자.
@@ -165,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onClick_Create(View view) {
         sqlDB = dbHelper.getWritableDatabase();
-        sqlDB.execSQL("CREATE TABLE groupTBL (Num INTEGER PRIMARY KEY AUTOINCREMENT, gName CHAR(20) , gNumber INTEGER);");
+        sqlDB.execSQL("CREATE TABLE IF NOT EXISTS groupTBL (Num INTEGER PRIMARY KEY AUTOINCREMENT, gName CHAR(20) , gNumber INTEGER);");
         sqlDB.close();
     }
 }
