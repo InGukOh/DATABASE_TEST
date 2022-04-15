@@ -6,7 +6,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -24,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     Button btnInsert, btnSelect, btnReset, btnCreate, listDelThis;
 
     LinearLayout add_Timer_Layout;
+    LinearLayout add_Schedule;
 
     Button delThis;
 
@@ -44,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         btnReset = findViewById(R.id.btnReset);
         btnCreate = findViewById(R.id.btnCreate);
 
+        add_Timer_Layout = (LinearLayout) findViewById(R.id.add_Timer_Layout);
+
         listSchedule = new EditText(getApplicationContext());
         listTimer = new EditText(getApplicationContext());
         listDelThis = new Button(getApplicationContext());
@@ -53,10 +58,52 @@ public class MainActivity extends AppCompatActivity {
         sqlDB = dbHelper.getReadableDatabase();
         Cursor cursor;
 
-        String sql = "CREATE TABLE IF NOT EXISTS groupTBL (Num INTEGER PRIMARY KEY AUTOINCREMENT, gName CHAR(20) , gNumber INTEGER);";
-        sqlDB.execSQL(sql);
+        cursor = sqlDB.rawQuery("SELECT COUNT(*) FROM groupTBL;",null);
+        int TC = 0;
+        if(cursor.moveToNext()){
+            TC =Integer.parseInt( cursor.getString(0));
+        } else {
+            TC = 0;
+        }
 
+        Toast.makeText(getApplicationContext(),""+TC+"",Toast.LENGTH_SHORT).show();
+        int test = 0;
 
+            add_Schedule = new LinearLayout(getApplicationContext());
+
+            add_Schedule.setOrientation(LinearLayout.HORIZONTAL);
+            add_Schedule.setGravity(Gravity.CENTER);
+
+            LinearLayout.LayoutParams setWnH =
+                    new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 210);
+            LinearLayout.LayoutParams Input_Schedule =
+                    new LinearLayout.LayoutParams(500, 200);
+            LinearLayout.LayoutParams InPut_Timer =
+                    new LinearLayout.LayoutParams(300, 200);
+            LinearLayout.LayoutParams Del_Btn =
+                    new LinearLayout.LayoutParams(200, 200);
+
+            add_Schedule.setLayoutParams(setWnH);
+            listSchedule.setLayoutParams(Input_Schedule);
+            listTimer.setLayoutParams(InPut_Timer);
+            listDelThis.setLayoutParams(Del_Btn);
+
+            listSchedule.setHint("일정내용");
+            listTimer.setHint("시간");
+            listDelThis.setText("삭제");
+            listDelThis.setTextSize(15);
+
+            listSchedule.setId(test);
+            listTimer.setId(test);
+            listDelThis.setId(test);
+        while(test < TC){
+            add_Schedule.addView(listSchedule);
+            add_Schedule.addView(listTimer);
+            add_Schedule.addView(listDelThis);
+            test++;
+
+        }
+        add_Timer_Layout.addView(add_Schedule);
 
         cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;", null);
 
@@ -166,5 +213,9 @@ public class MainActivity extends AppCompatActivity {
         sqlDB = dbHelper.getWritableDatabase();
         sqlDB.execSQL("CREATE TABLE IF NOT EXISTS groupTBL (Num INTEGER PRIMARY KEY AUTOINCREMENT, gName CHAR(20) , gNumber INTEGER);");
         sqlDB.close();
+    }
+
+    public void timer_Create(){
+
     }
 }
