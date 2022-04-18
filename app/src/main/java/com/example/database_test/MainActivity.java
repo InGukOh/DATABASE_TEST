@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     DBHelper dbHelper;
     SQLiteDatabase sqlDB;
 
-    TextView num , edit_schduel, edit_timer;
+    TextView num , edit_schedule, edit_timer;
     EditText setSchedule, setTimer, listSchedule, listTimer;
     Button btnInsert, btnSelect, btnReset, btnCreate, listDelThis;
 
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setSchedule = findViewById(R.id.add_schedule);
         setTimer = findViewById(R.id.add_timer);
         num = findViewById(R.id.num);
-        edit_schduel = findViewById(R.id.edtNameResult);
+        edit_schedule = findViewById(R.id.edtNameResult);
         edit_timer = findViewById(R.id.edtNumberResult);
         btnInsert = findViewById(R.id.btnInsert);
         btnSelect = findViewById(R.id.btnSelect);
@@ -60,9 +60,9 @@ public class MainActivity extends AppCompatActivity {
         sqlDB = dbHelper.getReadableDatabase();
         Cursor cursor;
 
-        cursor = sqlDB.rawQuery("SELECT COUNT(*) FROM groupTBL;",null);
 
-        timer_Create();
+
+        /*timer_Create();*/
 
         test = 0;
 
@@ -84,9 +84,14 @@ public class MainActivity extends AppCompatActivity {
 
         //이름 출력해주기
         num.setText(strNum);
-        edit_schduel.setText(strNames);
+        edit_schedule.setText(strNames);
         edit_timer.setText(strNumbers);
 
+
+        cursor = sqlDB.rawQuery("SELECT COUNT(*) FROM groupTBL;",null);
+
+        test = cursor.getCount();
+        Toast.makeText(getApplicationContext(),"테스트 "+test +" ",Toast.LENGTH_SHORT).show();
         cursor.close();
         sqlDB.close();
 
@@ -146,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
         //이름 출력해주기
         num.setText(strNum);
-        edit_schduel.setText(strNames);
+        edit_schedule.setText(strNames);
         edit_timer.setText(strNumbers);
 
         cursor.close();
@@ -176,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
         sqlDB.close();
     }
 
-    public void timer_Create(){
+    /*public void timer_Create(){
         for (int i=0;i<5;i++) {
 
             EditText et = new EditText(getApplicationContext());
@@ -187,5 +192,5 @@ public class MainActivity extends AppCompatActivity {
             add_Timer_Layout.addView(et);
 
         }
-    }
+    }*/
 }
