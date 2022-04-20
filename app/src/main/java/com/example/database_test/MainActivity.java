@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -20,6 +21,8 @@ public class MainActivity extends AppCompatActivity {
     //DB를 생성하고 초기화하는 DB생성자 정의 = DBHelper로 이동됨
     DBHelper dbHelper;
     SQLiteDatabase sqlDB;
+
+    Cursor cursor;
 
     TextView num , edit_schedule, edit_timer;
     EditText setSchedule, setTimer, listSchedule, listTimer;
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         dbHelper = new DBHelper(this);
         sqlDB = dbHelper.getReadableDatabase();
-        Cursor cursor;
+
 
 
 
@@ -69,9 +72,9 @@ public class MainActivity extends AppCompatActivity {
         cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;", null);
 
         //그룹이름과 인원을 나타내 줄 문자열 선언
-        String strNum = "타이머 번호" + "\r\n" + "-------" + "\r\n";
-        String strNames = "일정" + "\r\n" + "-------" + "\r\n";
-        String strNumbers = "시간" + "\r\n" + "-------" + "\r\n";
+        String strNum = "";
+        String strNames = "";
+        String strNumbers = "";
 
 
         //커서가 움직이면서  현재 커서의 열 번호 데이터값을 반환해서 문자열 변수에 계속 누적한다.
@@ -88,9 +91,10 @@ public class MainActivity extends AppCompatActivity {
         edit_timer.setText(strNumbers);
 
 
-        cursor = sqlDB.rawQuery("SELECT COUNT(*) FROM groupTBL;",null);
+        cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;",null);
 
         test = cursor.getCount();
+        timer_Create(test);
         Toast.makeText(getApplicationContext(),"테스트 "+test +" ",Toast.LENGTH_SHORT).show();
         cursor.close();
         sqlDB.close();
@@ -136,9 +140,9 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor;
         cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;", null);
 
-        String strNum = "타이머 번호" + "\r\n" + "-------" + "\r\n";
-        String strNames = "일정" + "\r\n" + "-------" + "\r\n";
-        String strNumbers = "시간" + "\r\n" + "-------" + "\r\n";
+        String strNum = "";
+        String strNames = "";
+        String strNumbers = "";
 
 
         //커서가 움직이면서  현재 커서의 열 번호 데이터값을 반환해서 문자열 변수에 계속 누적한다.
@@ -158,11 +162,13 @@ public class MainActivity extends AppCompatActivity {
         sqlDB.close();
     }
     public void onClick_Insert(View view) {
-        //마찬가지로 쓰기용으로 열고, 쿼리문을 입력해준다. 따옴표에 주의하자.
         sqlDB = dbHelper.getWritableDatabase();
         sqlDB.execSQL("INSERT INTO groupTBL(gName,gNumber) VALUES (" +
                 "'" + setSchedule.getText().toString() + "' ,"
                 + setTimer.getText().toString() + ");");
+        cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;", null);
+        test = cursor.getCount();
+        timer_Create(test);
         sqlDB.close();
         Toast.makeText(getApplicationContext(), "입력됨", Toast.LENGTH_SHORT).show();
         overridePendingTransition(0, 0);//인텐트 효과 없애기
@@ -171,6 +177,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void onClick_Drop(View view) {
         sqlDB = dbHelper.getWritableDatabase();
+        add_Timer_Layout.removeAllViewsInLayout();
         sqlDB.execSQL("Drop table IF EXISTS groupTBL");
         onClick_Create(view);
         sqlDB.close();
@@ -181,16 +188,17 @@ public class MainActivity extends AppCompatActivity {
         sqlDB.close();
     }
 
-    /*public void timer_Create(){
-        for (int i=0;i<5;i++) {
-
-            EditText et = new EditText(getApplicationContext());
+    public void timer_Create(int callCount){
+        add_Timer_Layout.removeAllViewsInLayout();
+        int start = 0;
+        while (start < callCount){
             LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            EditText et = new EditText(getApplicationContext());
             et.setLayoutParams(p);
-            et.setText("editText" + i + "번");
-            et.setId(i);
+            et.setText("editText" + start + "번");
+            et.setId(start);
             add_Timer_Layout.addView(et);
-
+            start++;
         }
-    }*/
+    }
 }
