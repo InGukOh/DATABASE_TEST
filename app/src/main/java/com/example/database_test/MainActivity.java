@@ -30,8 +30,13 @@ public class MainActivity extends AppCompatActivity {
 
     int test;
 
+    String strNum = "";
+    String strSchedule = "";
+    String strTimer = "";
+
     LinearLayout add_Timer_Layout;
     LinearLayout add_Schedule;
+    LinearLayout DBView;
 
     Button delThis;
 
@@ -41,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         setTitle("DB 입출력 학습");
 
-        //xml버튼들 객체연결////////////////////////////////////////
         setSchedule = findViewById(R.id.add_schedule);
         setTimer = findViewById(R.id.add_timer);
         num = findViewById(R.id.num);
@@ -63,33 +67,11 @@ public class MainActivity extends AppCompatActivity {
         sqlDB = dbHelper.getReadableDatabase();
 
 
-
-
-        /*timer_Create();*/
-
         test = 0;
 
         cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;", null);
 
-        //그룹이름과 인원을 나타내 줄 문자열 선언
-        String strNum = "";
-        String strNames = "";
-        String strNumbers = "";
-
-
-        //커서가 움직이면서  현재 커서의 열 번호 데이터값을 반환해서 문자열 변수에 계속 누적한다.
-        //0은 0번째열(그룹이름) , 1은 1번째열(인원)이 된다.
-        while(cursor.moveToNext()){
-            strNum += cursor.getString(0)+ "\r\n";
-            strNames += cursor.getString(1) + "\r\n";
-            strNumbers += cursor.getString(2) + "\r\n";
-        }
-
-        //이름 출력해주기
-        num.setText(strNum);
-        edit_schedule.setText(strNames);
-        edit_timer.setText(strNumbers);
-
+        DBView();
 
         cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;",null);
 
@@ -140,24 +122,20 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor;
         cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;", null);
 
-        String strNum = "";
-        String strNames = "";
-        String strNumbers = "";
-
 
         //커서가 움직이면서  현재 커서의 열 번호 데이터값을 반환해서 문자열 변수에 계속 누적한다.
         //0은 0번째열(그룹이름) , 1은 1번째열(인원)이 된다.
         while(cursor.moveToNext()){
             strNum += cursor.getString(0)+ "\r\n";
-            strNames += cursor.getString(1) + "\r\n";
-            strNumbers += cursor.getString(2) + "\r\n";
-        }
+            strSchedule += cursor.getString(1) + "\r\n";
+            strTimer += cursor.getString(2) + "\r\n";
+
 
         //이름 출력해주기
         num.setText(strNum);
-        edit_schedule.setText(strNames);
-        edit_timer.setText(strNumbers);
-
+        edit_schedule.setText(strSchedule);
+        edit_timer.setText(strTimer);
+        }
         cursor.close();
         sqlDB.close();
     }
@@ -200,5 +178,18 @@ public class MainActivity extends AppCompatActivity {
             add_Timer_Layout.addView(et);
             start++;
         }
+    }
+    public  void DBView(){
+       /* DBView.removeAllViewsInLayout();*/
+        while(cursor.moveToNext()){
+            strNum += cursor.getString(0)+ "\r\n";
+            strSchedule += cursor.getString(1) + "\r\n";
+            strTimer += cursor.getString(2) + "\r\n";
+        }
+
+        //이름 출력해주기
+        num.setText(strNum);
+        edit_schedule.setText(strSchedule);
+        edit_timer.setText(strTimer);
     }
 }
