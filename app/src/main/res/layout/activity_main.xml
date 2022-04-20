@@ -82,61 +82,15 @@
     </LinearLayout>
 
     <ScrollView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-    <LinearLayout
-        android:id="@+id/DBVIew"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="top"
-        android:paddingHorizontal="20dp">
-
-        <TextView
-            android:id="@+id/num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/edtNameResult"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <TextView
-            android:id="@+id/edtNumberResult"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <!--<TextView
-            android:id="@+id/num"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:minWidth="20dp" />
-
-        <EditText
-            android:id="@+id/edtNameResult"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
-
-        <EditText
-            android:id="@+id/edtNumberResult"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />-->
-    </LinearLayout>
-    </ScrollView>
+        android:layout_height="wrap_content">
     <LinearLayout
         android:id="@+id/add_Timer_Layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="20dp"
         android:orientation="vertical">
-
-
     </LinearLayout>
+    </ScrollView>
+
 </LinearLayout>
