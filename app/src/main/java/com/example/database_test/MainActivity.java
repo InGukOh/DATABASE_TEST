@@ -2,6 +2,7 @@ package com.example.database_test;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,10 +15,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Time;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,17 +35,21 @@ public class MainActivity extends AppCompatActivity {
     EditText setSchedule, setTimer, listSchedule, listTimer;
     Button btnInsert, btnSelect, btnReset, btnCreate, listDelThis;
 
-    int test;
+    int CallCount;
 
     String strNum = "";
     String strSchedule = "";
     String strTimer = "";
 
-    LinearLayout add_Timer_Layout;
+    TableLayout add_Timer_Layout;
     LinearLayout add_Schedule;
     LinearLayout DBView;
 
     Button delThis;
+
+    ArrayList<Integer> numb= new ArrayList<>();
+    ArrayList<String> sch= new ArrayList<>();
+    ArrayList<String> tm= new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
         btnReset = findViewById(R.id.btnReset);
         btnCreate = findViewById(R.id.btnCreate);
 
-        add_Timer_Layout = (LinearLayout) findViewById(R.id.add_Timer_Layout);
+        add_Timer_Layout = findViewById(R.id.add_Timer_Layout);
 
         listSchedule = new EditText(getApplicationContext());
         listTimer = new EditText(getApplicationContext());
@@ -66,12 +74,13 @@ public class MainActivity extends AppCompatActivity {
         dbHelper = new DBHelper(this);
         sqlDB = dbHelper.getReadableDatabase();
 
-        cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;", null);
+        cursor = sqlDB.rawQuery("SELECT count(*) FROM groupTBL;", null);
+        cursor.moveToFirst();
+        CallCount = cursor.getInt(0);
+        Toast.makeText(getApplicationContext(),"DB 내용갯수 "+ CallCount +" ",Toast.LENGTH_SHORT).show();
 
-        test = cursor.getCount();
-        timer_Create(test);
+        timer_Create(CallCount);
 
-        Toast.makeText(getApplicationContext(),"테스트 "+test +" ",Toast.LENGTH_SHORT).show();
         cursor.close();
         sqlDB.close();
 
@@ -119,9 +128,12 @@ public class MainActivity extends AppCompatActivity {
         sqlDB.execSQL("INSERT INTO groupTBL(gName,gNumber) VALUES (" +
                 "'" + setSchedule.getText().toString() + "' ,"
                 + setTimer.getText().toString() + ");");
-        cursor = sqlDB.rawQuery("SELECT * FROM groupTBL;", null);
-        test = cursor.getCount();
-        timer_Create(test);
+
+        cursor = sqlDB.rawQuery("SELECT count(*) FROM groupTBL;", null);
+        cursor.moveToFirst();
+        CallCount = cursor.getInt(0);
+        timer_Create(CallCount);
+
         sqlDB.close();
         Toast.makeText(getApplicationContext(), "입력됨", Toast.LENGTH_SHORT).show();
     }
@@ -138,43 +150,68 @@ public class MainActivity extends AppCompatActivity {
         sqlDB.close();
     }
 
-    public void timer_Create(int callCount){
-        int start = 0;
+    public void timer_Create(int CallCount) {
         sqlDB = dbHelper.getWritableDatabase();
 
-        while (start < callCount){
-            LinearLayout p2 = new LinearLayout(this);
-            p2.setOrientation(LinearLayout.HORIZONTAL);
-            p2.setGravity(Gravity.CENTER);
-            LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(400, ViewGroup.LayoutParams.WRAP_CONTENT,LinearLayout.HORIZONTAL);
+        int nn;
+        String ss;
+        int tt;
 
-            TextView Num = new TextView(getApplicationContext());
+        for(int i =1; i<=CallCount; i++){
+
+            TableRow TimerSet = new TableRow(this);
+            TimerSet.setOrientation(TableRow.HORIZONTAL);
+            TimerSet.setGravity(Gravity.CENTER);
+
+            TableRow.LayoutParams rowLayout = new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, LinearLayout.HORIZONTAL);
+
+            EditText Num = new EditText(getApplicationContext());
             EditText Schedule = new EditText(getApplicationContext());
             EditText Timer = new EditText(getApplicationContext());
+            Button EditThis = new Button(getApplicationContext());
+            Button DelThis = new Button(getApplicationContext());
+            EditThis.setText("수정");
+            DelThis.setText("삭제");
 
-            Num.setLayoutParams(p);
-            Schedule.setLayoutParams(p);
-            Timer.setLayoutParams(p);
-            int starter = 1;
-            while(starter <= callCount){
-                cursor = sqlDB.rawQuery("SELECT * FROM groupTBL where num = "+ starter ,null);
-                cursor.moveToFirst();
-                String number = cursor.getString(0);
-                String SC = cursor.getString(1);
-                Num.setId(start);
-                Num.setText(number);
-                Schedule.setText(SC);
-                Timer.setText("editText" + start + "번");
-                Schedule.setId(start);
-                Timer.setId(start);
-                starter++;
-            }
-            p2.addView(Num);
-            p2.addView(Schedule);
-            p2.addView(Timer);
-            add_Timer_Layout.addView(p2);
+            Num.setLayoutParams(rowLayout);
+            Schedule.setLayoutParams(rowLayout);
+            Timer.setLayoutParams(rowLayout);
 
-            start++;
+            Num.setId(i);
+            Schedule.setId(i);
+            Timer.setId(i);
+            EditThis.setId(i);
+            DelThis.setId(i);
+
+            EditThis.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    EditThis(view);
+                }
+            });
+
+            cursor = sqlDB.rawQuery("SELECT * FROM groupTBL WHERE NUM ="+i+";", null);
+            cursor.moveToFirst();
+
+            Num.setText(Integer.toString(cursor.getInt(0)));
+            Schedule.setText(cursor.getString(1));
+            Timer.setText(Integer.toString(cursor.getInt(2)));
+
+            TimerSet.addView(Num);
+            TimerSet.addView(Schedule);
+            TimerSet.addView(Timer);
+            TimerSet.addView(EditThis);
+            TimerSet.addView(DelThis);
+            add_Timer_Layout.addView(TimerSet);
+
+            Toast.makeText(getApplicationContext(), " "+cursor.getInt(0)+" "+cursor.getString(1)+" "+cursor.getInt(2), Toast.LENGTH_SHORT).show();
         }
+    }
+    public void EditThis(View view){
+        EditText ES = findViewById(view.getId());
+
+        String tes = ES.getText().toString();
+        Toast.makeText(getApplicationContext(), " "+tes,Toast.LENGTH_SHORT).show();
     }
 }
